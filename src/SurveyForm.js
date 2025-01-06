@@ -48,13 +48,14 @@ const SurveyForm = () => {
     return true;
   };
 
- // subit the response
+ // sumbit the response
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
 
     if (!validateForm()) return;
     try {
-      await axios.post("http://localhost:5000/api/surveys/submit", formData);
+      await axios.post("https://back-end-orcin-gamma.vercel.app/api/surveys/submit", formData);
       setSuccess(true);
       setTimeout(()=>{
         setSuccess(false);
