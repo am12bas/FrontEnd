@@ -48,6 +48,22 @@ const SurveyForm = () => {
     return true;
   };
 
+  // Return date must be > travel date
+  const validateDates = (travelDate, returnDate) => {
+    if (travelDate && returnDate) {
+      const travel = new Date(travelDate);
+      const returnD = new Date(returnDate);
+  
+      if (returnD < travel) {
+        setError("Return date must be later than the travel date.");
+        return false;
+      }
+    }
+    setError("");
+    return true;
+  };
+  
+
  // sumbit the response
   const handleSubmit = async (e) => {
     
@@ -55,7 +71,10 @@ const SurveyForm = () => {
 
     if (!validateForm()) return;
     try {
+      // SERVER
       await axios.post("https://back-end-orcin-gamma.vercel.app/api/surveys/submit", formData);
+      //LOCAL HOST
+      // await axios.post("http://localhost:5000/api/surveys/submit", formData);
       setSuccess(true);
       setTimeout(()=>{
         setSuccess(false);
@@ -172,28 +191,32 @@ const SurveyForm = () => {
   onChange={handleChange}
   required
 />
-
-<label htmlFor="travel_date">Travel Date:</label>
+<label htmlFor="Travel Date">Travel Date:</label>
 <input
-  id="travel_date"
   type="date"
   name="Travel_date"
   placeholder="Travel Date"
   value={formData.Travel_date}
-  onChange={handleChange}
+  onChange={(e) => {
+    handleChange(e);
+    validateDates(e.target.value, formData.Return_date);
+  }}
   required
 />
 
-<label htmlFor="return_date">Return Date:</label>
+<label htmlFor="Return Date">Return Date:</label>
 <input
-  id="return_date"
   type="date"
   name="Return_date"
   placeholder="Return Date"
   value={formData.Return_date}
-  onChange={handleChange}
+  onChange={(e) => {
+    handleChange(e);
+    validateDates(formData.Travel_date, e.target.value);
+  }}
   required
 />
+{error && <p className="error-message">{error}</p>}
 
         <button type="submit">Submit</button>
       </form>
